@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Visualizing Genetic Disorders | DS4200</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset & base ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #f7f5f0;
+      color: #1a1a1a;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background-color: #1a1a2e;
+      padding: 16px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav .nav-title {
+      color: #ffffff;
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+    }
+
+    nav ul a {
+      color: #a0a8c0;
+      text-decoration: none;
+      font-size: 0.88rem;
+    }
+
+    nav ul a:hover { color: #ffffff; }
+
+    /* ── Hero ── */
+    .hero {
+      background-color: #1a1a2e;
+      color: #ffffff;
+      padding: 80px 48px 72px;
+      border-bottom: 4px solid #4f7cff;
+    }
+
+    .hero .course-tag {
+      font-family: monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #7b9cff;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: 2.8rem;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      max-width: 680px;
+    }
+
+    .hero h1 em { font-style: italic; color: #7b9cff; }
+
+    .hero .hero-desc {
+      color: #a0a8c0;
+      font-size: 1rem;
+      max-width: 580px;
+      margin-bottom: 40px;
+    }
+
+    .stats { display: flex; gap: 40px; }
+    .stat  { display: flex; flex-direction: column; }
+
+    .stat .num {
+      font-family: 'Lora', serif;
+      font-size: 1.9rem;
+      color: #ffffff;
+    }
+
+    .stat .lbl {
+      font-family: monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #7b9cff;
+    }
+
+    /* ── Shared section ── */
+    section {
+      padding: 64px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #4f7cff;
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.9rem;
+      margin-bottom: 10px;
+      color: #1a1a2e;
+    }
+
+    p.subtitle {
+      color: #555;
+      font-size: 0.96rem;
+      max-width: 640px;
+      margin-bottom: 36px;
+    }
+
+    hr { border: none; border-top: 1px solid #ddd; }
+
+    /* ── Intro two-col ── */
+    .intro-grid {
+      display: flex;
+      gap: 56px;
+      align-items: flex-start;
+    }
+
+    .intro-text { flex: 1; }
+    .intro-text p { color: #444; font-size: 0.96rem; margin-bottom: 12px; }
+
+    .task-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .task-card {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-left: 4px solid #4f7cff;
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+
+    .task-card .task-num {
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: #4f7cff;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+    }
+
+    .task-card h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 3px; color: #1a1a2e; }
+    .task-card p  { font-size: 0.83rem; color: #666; }
+
+    /* ── Data section ── */
+    .data-section {
+      background-color: #1a1a2e;
+      padding: 64px 48px;
+    }
+
+    .data-section .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      gap: 56px;
+      align-items: flex-start;
+    }
+
+    .data-section .section-label { color: #7b9cff; }
+    .data-section h2  { color: #ffffff; }
+    .data-section p.subtitle { color: #a0a8c0; }
+    .data-section p   { color: #a0a8c0; font-size: 0.93rem; margin-bottom: 10px; max-width: 560px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+
+    th {
+      text-align: left;
+      font-family: monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #7b9cff;
+      padding: 8px 10px 8px 0;
+      border-bottom: 1px solid #2e2e4a;
+    }
+
+    td {
+      padding: 10px 10px 10px 0;
+      border-bottom: 1px solid #2e2e4a;
+      color: #a0a8c0;
+      vertical-align: top;
+    }
+
+    td:first-child { color: #ffffff; font-weight: 600; }
+
+    .meta-cards {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 260px;
+    }
+
+    .meta-card {
+      background-color: #222244;
+      border: 1px solid #2e2e4a;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .meta-card h4 { color: #ffffff; font-size: 0.88rem; margin-bottom: 3px; }
+    .meta-card p  { color: #a0a8c0; font-size: 0.8rem; margin: 0; max-width: none; }
+
+    /* ── Visualization blocks ── */
+    .viz-block {
+      margin-bottom: 56px;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .viz-block:last-child { margin-bottom: 0; }
+
+    .viz-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .viz-header .viz-type {
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 3px;
+    }
+
+    .viz-header h3 {
+      font-family: 'Lora', serif;
+      font-size: 1.15rem;
+      color: #1a1a2e;
+    }
+
+    .viz-chart {
+      padding: 48px 24px;
+      background-color: #f4f4f4;
+      border-bottom: 1px solid #e0e0e0;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viz-chart .placeholder-text {
+      font-family: monospace;
+      font-size: 1.1rem;
+      color: #aaa;
+      letter-spacing: 0.05em;
+    }
+
+    .viz-footer {
+      padding: 20px 24px;
+      display: flex;
+      gap: 24px;
+    }
+
+    .viz-footer .takeaway { flex: 1; }
+
+    .viz-footer .takeaway h4 {
+      font-size: 0.78rem;
+      font-family: monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #4f7cff;
+      margin-bottom: 6px;
+    }
+
+    .viz-footer .takeaway p {
+      font-size: 0.86rem;
+      color: #555;
+      line-height: 1.65;
+    }
+
+    .viz-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      padding-top: 2px;
+    }
+
+    .tag {
+      font-size: 0.68rem;
+      font-family: monospace;
+      padding: 2px 10px;
+      border-radius: 100px;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+
+    .tag-blue   { color: #4f7cff; border-color: #4f7cff; background-color: #eef2ff; }
+    .tag-green  { color: #16a34a; border-color: #16a34a; background-color: #eefaf4; }
+    .tag-purple { color: #7c3aed; border-color: #7c3aed; background-color: #f3eeff; }
+    .tag-orange { color: #c2410c; border-color: #c2410c; background-color: #fff4ec; }
+    .tag-altair { color: #0369a1; border-color: #0369a1; background-color: #e0f2fe; }
+    .tag-d3     { color: #b45309; border-color: #b45309; background-color: #fef3c7; }
+
+    .interaction-note {
+      background-color: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      color: #78350f;
+      margin: 0 24px 20px;
+    }
+
+    .interaction-note strong { font-weight: 600; }
+
+    /* ── References ── */
+    .ref-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ref-list li {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-left: 4px solid #4f7cff;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .ref-list li a {
+      color: #4f7cff;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .ref-list li a:hover { color: #1a1a2e; }
+
+    /* ── Summary ── */
+    .summary-grid {
+      display: flex;
+      gap: 32px;
+    }
+
+    .summary-card {
+      flex: 1;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .summary-card h3 {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #1a1a2e;
+    }
+
+    .summary-card p {
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.65;
+    }
+
+    .summary-card p + p { margin-top: 10px; }
+
+    /* ── Team ── */
+    .team-section {
+      background-color: #f0eee8;
+      padding: 64px 48px;
+      border-top: 1px solid #ddd;
+    }
+
+    .team-section .inner { max-width: 1100px; margin: 0 auto; }
+
+    .team-grid {
+      display: flex;
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .member-card {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 22px;
+      flex: 1;
+    }
+
+    .member-initial {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lora', serif;
+      font-size: 1.2rem;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .bg-blue   { background-color: #4f7cff; }
+    .bg-purple { background-color: #7c3aed; }
+    .bg-green  { background-color: #16a34a; }
+
+    .member-card h3 { font-size: 0.97rem; font-weight: 600; color: #1a1a2e; margin-bottom: 2px; }
+
+    .member-role {
+      font-family: monospace;
+      font-size: 0.69rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .member-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .member-card ul li { font-size: 0.83rem; color: #555; }
+    .member-card ul li::before { content: '→ '; color: #4f7cff; }
+
+    /* ── Footer ── */
+    footer {
+      background-color: #1a1a2e;
+      color: #a0a8c0;
+      padding: 22px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: monospace;
+      font-size: 0.78rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <span class="nav-title">Visualizing Genetic Disorders</span>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#visualizations">Visualizations</a></li>
+      <li><a href="#summary">Summary</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#team">Team</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <p class="course-tag">DS4200 &nbsp;·&nbsp; Northeastern University &nbsp;·&nbsp; Spring 2026</p>
+    <h1>Visualizing the <em>Complexity</em><br>of Genetic Disorders</h1>
+    <p class="hero-desc">
+      An interactive multi-variate analysis system exploring the relationships between
+      genetic mutations, inheritance patterns, and patient outcomes through dynamic visualization.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <span class="num">22K</span>
+        <span class="lbl">Patient Records</span>
+      </div>
+      <div class="stat">
+        <span class="num">45</span>
+        <span class="lbl">Features</span>
+      </div>
+      <div class="stat">
+        <span class="num">5</span>
+        <span class="lbl">Visualizations</span>
+      </div>
+      <div class="stat">
+        <span class="num">3</span>
+        <span class="lbl">Disorder Types</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Introduction -->
+  <section id="intro">
+    <p class="section-label">Introduction</p>
+    <h2>Project Overview &amp; Tasks</h2>
+
+    <div class="intro-grid">
+      <div class="intro-text">
+        <p>
+          Genetic disorders affect millions of people worldwide and represent a critical area
+          of medical research. Understanding the relationships between genetic mutations,
+          inheritance patterns, and patient outcomes is essential for advancing diagnosis,
+          treatment, and genetic counseling.
+        </p>
+        <p>
+          The multidimensional nature of genomic data makes identifying patterns challenging
+          through traditional methods. This project builds an interactive visualization system
+          that enables researchers and clinicians to explore genetic disorder data dynamically.
+        </p>
+        <p>
+          We examine quantitative variables, such as blood cell counts and patient age,
+          alongside qualitative factors like disorder type, inheritance pattern, and
+          environmental risk factors. Our goal is to make complex genomic data more accessible
+          and actionable for medical researchers and students.
+        </p>
+        <p>
+          The project uses the Kaggle AI Buzz Genetic Disorders training dataset, which
+          contains approximately 22,000 patient records with 45 features spanning demographic
+          information, clinical measurements, and genetic disorder classifications.
+        </p>
+      </div>
+
+      <div class="task-list">
+        <div class="task-card">
+          <div class="task-num">Task 01</div>
+          <h3>Clinical Measurements vs. Disorder Type</h3>
+          <p>
+            Do biomarkers like blood cell count and white blood cell count vary across
+            the three genetic disorder categories? Can these values help identify
+            diagnostic patterns?
+          </p>
+        </div>
+        <div class="task-card">
+          <div class="task-num">Task 02</div>
+          <h3>Inheritance Patterns &amp; Outcomes</h3>
+          <p>
+            How do maternal vs. paternal inheritance pathways connect to specific disorder
+            types? Are certain inheritance routes more strongly associated with particular
+            disorders?
+          </p>
+        </div>
+        <div class="task-card">
+          <div class="task-num">Task 03</div>
+          <h3>Demographic &amp; Environmental Risk</h3>
+          <p>
+            How do parental substance abuse history and serious maternal illness influence
+            the type and severity of genetic disorders in patients?
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Data -->
+  <div class="data-section" id="data">
+    <div class="inner">
+      <div style="flex: 1;">
+        <p class="section-label">Dataset</p>
+        <h2>About the Data</h2>
+        <p>
+          The dataset used in this project is the <strong style="color:#ffffff;">AI Buzz Genetic Disorders Dataset</strong>,
+          obtained from <a href="https://www.kaggle.com/datasets/aibuzz/predict-the-genetic-disorders-datasetof-genomes?select=train_genetic_disorders.csv" style="color:#7b9cff;">Kaggle</a>.
+          Specifically, we use the training file <code style="color:#7b9cff; font-size:0.85rem;">train_genetic_disorders.csv</code>.
+        </p>
+        <p>
+          The raw dataset contains approximately <strong style="color:#ffffff;">22,000 patient records</strong>
+          with <strong style="color:#ffffff;">45 features</strong> covering demographic information (patient and
+          parental ages, gender), clinical measurements (blood cell count, white blood cell count),
+          genetic disorder classifications (3 disorder types, 9 subclasses), and patient outcomes
+          (status, birth defects). After removing rows with missing values, the cleaned dataset
+          contains approximately <strong style="color:#ffffff;">5,000 records</strong>, which is
+          used for all visualizations.
+        </p>
+        <p>
+          Because some columns, specifically the test and symptom columns (test 1–5, symptoms 1–5),
+          are anonymized with binary values (0 or 1), we engineered a new feature called
+          <strong style="color:#ffffff;">symptom severity score</strong>, calculated by summing
+          the number of symptoms a patient tested positive for. This derived variable is used
+          across several visualizations.
+        </p>
+
+        <br>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Variables</th>
+              <th>Used For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Quantitative</td>
+              <td>Patient age, parental ages, blood cell count, white blood cell count, previous abortions</td>
+              <td>Scatter plots, box plots, distribution analysis</td>
+            </tr>
+            <tr>
+              <td>Categorical</td>
+              <td>Disorder type (3), subclass (9), gender, inheritance source, birth defects, blood test results</td>
+              <td>Grouping, filtering, comparative analysis</td>
+            </tr>
+            <tr>
+              <td>Engineered</td>
+              <td>Symptom severity score — sum of positive symptoms across symptoms 1–5</td>
+              <td>All visualizations</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="meta-cards">
+        <div class="meta-card">
+          <h4>🧬 &nbsp; Source</h4>
+          <p>Kaggle — AI Buzz Genetic Disorders Dataset (train_genetic_disorders.csv)</p>
+        </div>
+        <div class="meta-card">
+          <h4>📋 &nbsp; Raw Size</h4>
+          <p>~22,000 rows × 45 columns</p>
+        </div>
+        <div class="meta-card">
+          <h4>🔬 &nbsp; After Cleaning</h4>
+          <p>~5,000 rows after removing missing values</p>
+        </div>
+        <div class="meta-card">
+          <h4>📊 &nbsp; Disorder Types</h4>
+          <p>3 genetic disorder types, 9 subclasses</p>
+        </div>
+        <div class="meta-card">
+          <h4>🔒 &nbsp; Privacy Note</h4>
+          <p>Test and symptom columns are anonymized; only a derived severity score is shown.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualizations -->
+  <section id="visualizations">
+    <p class="section-label">Visualizations</p>
+    <h2>Data Visualizations</h2>
+    <p class="subtitle">
+      Five visualizations addressing all three analysis tasks, built with Altair and D3.js.
+      Each visualization includes a takeaway explaining key findings.
+    </p>
+
+    <!-- Plot 1 -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <div class="viz-type">Plot 1 &nbsp;·&nbsp; Altair &nbsp;·&nbsp; Static + Interactive</div>
+        <h3>Blood Cell Count vs. White Blood Cell Count by Disorder Type</h3>
+      </div>
+      <div class="viz-chart">
+        <span class="placeholder-text">[ Visual 1 ]</span>
+      </div>
+      <div class="interaction-note">
+        <strong>Interaction:</strong> [add in]
+      </div>
+      <div class="viz-footer">
+        <div class="takeaway">
+          <h4>Takeaway</h4>
+          <p>
+            [add in after reviewing visuals]
+          </p>
+        </div>
+        <div class="viz-tags">
+          <span class="tag tag-altair">Altair</span>
+          <span class="tag tag-blue">Task 1</span>
+          <span class="tag tag-green">Dalia</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plot 2 -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <div class="viz-type">Plot 2 &nbsp;·&nbsp; Altair &nbsp;·&nbsp; Static + Interactive</div>
+        <h3>Disorder Count by Gender and Inheritance Source</h3>
+      </div>
+      <div class="viz-chart">
+        <span class="placeholder-text">[ Visual 2 ]</span>
+      </div>
+      <div class="interaction-note">
+        <strong>Interaction:</strong> [add in]
+      </div>
+      <div class="viz-footer">
+        <div class="takeaway">
+          <h4>Takeaway</h4>
+          <p>
+            [add in after reviewing visuals]
+          </p>
+        </div>
+        <div class="viz-tags">
+          <span class="tag tag-altair">Altair</span>
+          <span class="tag tag-blue">Task 2</span>
+          <span class="tag tag-green">Dalia</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plot 3 -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <div class="viz-type">Plot 3 &nbsp;·&nbsp; D3.js &nbsp;·&nbsp; Interactive</div>
+        <h3>Inheritance Flow to Disorder Type — Sankey Diagram</h3>
+      </div>
+      <div class="viz-chart" id="sankey-chart">
+        <span class="placeholder-text">[ Visual 3 ]</span>
+      </div>
+      <div class="interaction-note">
+        <strong>Interaction:</strong> [add in]
+      </div>
+      <div class="viz-footer">
+        <div class="takeaway">
+          <h4>Takeaway</h4>
+          <p>
+            [add in after reviewing visuals]
+          </p>
+        </div>
+        <div class="viz-tags">
+          <span class="tag tag-d3">D3.js</span>
+          <span class="tag tag-blue">Task 2</span>
+          <span class="tag tag-purple">Yuqi</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plot 4 -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <div class="viz-type">Plot 4 &nbsp;·&nbsp; D3.js &nbsp;·&nbsp; Interactive</div>
+        <h3>Blood Cell Count Distribution by Risk Factor Category</h3>
+      </div>
+      <div class="viz-chart" id="boxplot-chart">
+        <span class="placeholder-text">[ Visual 4 ]</span>
+      </div>
+      <div class="interaction-note">
+        <strong>Interaction:</strong> [add in]
+      <div class="viz-footer">
+        <div class="takeaway">
+          <h4>Takeaway</h4>
+          <p>
+            [add in after reviewing visuals]
+          </p>
+        </div>
+        <div class="viz-tags">
+          <span class="tag tag-d3">D3.js</span>
+          <span class="tag tag-blue">Task 3</span>
+          <span class="tag tag-purple">Yuqi</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plot 5 -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <div class="viz-type">Plot 5 &nbsp;·&nbsp; D3.js &nbsp;·&nbsp; Interactive</div>
+        <h3>Hierarchical Inheritance and Disorder Classification — Tree Diagram</h3>
+      </div>
+      <div class="viz-chart" id="tree-chart">
+        <span class="placeholder-text">[ Visual 5 ]</span>
+      </div>
+      <div class="interaction-note">
+        <strong>Interaction:</strong> [add in]
+      </div>
+      <div class="viz-footer">
+        <div class="takeaway">
+          <h4>Takeaway</h4>
+          <p>
+            [add in after reviewing visuals]
+          </p>
+        </div>
+        <div class="viz-tags">
+          <span class="tag tag-d3">D3.js</span>
+          <span class="tag tag-blue">Tasks 2 &amp; 3</span>
+          <span class="tag tag-orange">Jeff</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <hr>
+
+  <!-- Summary -->
+  <section id="summary">
+    <p class="section-label">Summary</p>
+    <h2>Findings &amp; Future Work</h2>
+    <p class="subtitle">
+      What we learned from visualizing the genetic disorder dataset, and directions for future exploration.
+    </p>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h3>🔍 &nbsp; Key Findings</h3>
+        <p>
+          [add in after reviewing visuals]
+        </p>
+        <p>
+          [add in after reviewing visuals]
+        </p>
+      </div>
+
+      <div class="summary-card">
+        <h3>🔭 &nbsp; Limitations &amp; Future Work</h3>
+        <p>
+          [add in after reviewing visuals]
+        </p>
+        <p>
+          [add in after reviewing visuals]
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- References -->
+  <section id="references">
+    <p class="section-label">References</p>
+    <h2>Related Work</h2>
+    <p class="subtitle">Academic sources and datasets that informed this project.</p>
+
+    <ul class="ref-list">
+      <li>
+        <strong>Glusman, G., Caballero, J., Mauldin, D. E., Hood, L., &amp; Roach, J. C. (2011).</strong>
+        Kaviar: an accessible system for testing SNV novelty.
+        <em>Bioinformatics, 27</em>(22), 3216–3217.
+        <br>
+        <a href="https://doi.org/10.1093/bioinformatics/btr540" target="_blank">
+          https://doi.org/10.1093/bioinformatics/btr540
+        </a>
+        <br>
+        <span style="font-size:0.82rem; color:#777; margin-top:4px; display:block;">
+          This paper presents a system for analyzing single nucleotide variants (SNVs) in genetic data,
+          informing how we present mutation data across different disorder types in our system.
+        </span>
+      </li>
+      <li>
+        <strong>Schriml, L. M., Mitraka, E., Munro, J., et al. (2019).</strong>
+        Human Disease Ontology 2018 update: Classification, content and workflow expansion.
+        <em>Nucleic Acids Research, 47</em>(D1), D955–D962.
+        <br>
+        <a href="https://doi.org/10.1093/nar/gky1032" target="_blank">
+          https://doi.org/10.1093/nar/gky1032
+        </a>
+        <br>
+        <span style="font-size:0.82rem; color:#777; margin-top:4px; display:block;">
+          This work on disease classification and ontology provides the framework we use for
+          organizing and filtering between different disorder types and subclasses.
+        </span>
+      </li>
+      <li>
+        <strong>AI Buzz Genetic Disorders Dataset (2023).</strong> Kaggle.
+        <br>
+        <a href="https://www.kaggle.com/datasets/aibuzz/predict-the-genetic-disorders-datasetof-genomes?select=train_genetic_disorders.csv" target="_blank">
+          https://www.kaggle.com/datasets/aibuzz/predict-the-genetic-disorders-datasetof-genomes?select=train_genetic_disorders.csv
+        </a>
+        <br>
+        <span style="font-size:0.82rem; color:#777; margin-top:4px; display:block;">
+          The primary dataset used in this project, containing ~22,000 patient records
+          with 45 features covering demographics, clinical measurements, and genetic disorder classifications.
+        </span>
+      </li>
+      <li>
+        <strong>Bostock, M., Ogievetsky, V., &amp; Heer, J. (2011).</strong>
+        D³: Data-Driven Documents.
+        <em>IEEE Transactions on Visualization and Computer Graphics, 17</em>(12), 2301–2309.
+        <br>
+        <a href="https://doi.org/10.1109/TVCG.2011.185" target="_blank">
+          https://doi.org/10.1109/TVCG.2011.185
+        </a>
+        <br>
+        <span style="font-size:0.82rem; color:#777; margin-top:4px; display:block;">
+          The foundational paper for D3.js, the JavaScript library used to build the Sankey diagram,
+          box plot, and tree diagram in this project.
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <!-- Team -->
+  <div class="team-section" id="team">
+    <div class="inner">
+      <p class="section-label">The Team</p>
+      <h2>Who Built This</h2>
+
+      <div class="team-grid">
+        <div class="member-card">
+          <div class="member-initial bg-blue">D</div>
+          <h3>Dalia</h3>
+          <div class="member-role">Data &amp; Visualization</div>
+          <ul>
+            <li>Data collection &amp; exploration</li>
+            <li>Plot 1 — Altair scatter plot</li>
+            <li>Plot 2 — Altair grouped bar chart</li>
+            <li>Website layout for plots 1 &amp; 2</li>
+            <li>Introduction &amp; related work (report)</li>
+          </ul>
+        </div>
+        <div class="member-card">
+          <div class="member-initial bg-purple">Y</div>
+          <h3>Yuqi</h3>
+          <div class="member-role">Engineering &amp; Visualization</div>
+          <ul>
+            <li>Data processing &amp; feature engineering</li>
+            <li>Plot 3 — D3.js Sankey diagram</li>
+            <li>Plot 4 — D3.js grouped box plot</li>
+            <li>Website implementation for plots 3 &amp; 4</li>
+            <li>Data description &amp; analysis plan (report)</li>
+          </ul>
+        </div>
+        <div class="member-card">
+          <div class="member-initial bg-green">J</div>
+          <h3>Jeff</h3>
+          <div class="member-role">QA &amp; Integration</div>
+          <ul>
+            <li>Data validation &amp; quality assurance</li>
+            <li>Plot 5 — D3.js tree diagram</li>
+            <li>Website integration &amp; interactivity</li>
+            <li>Team coordination &amp; final presentation</li>
+          </ul>
+        </div>
+      </div>
+
+      <p style="margin-top: 22px; font-size: 0.87rem; color: #555;">
+        <strong>All members:</strong> collaborative design decisions, user testing, debugging, and documentation.
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>Visualizing Genetic Disorders &nbsp;·&nbsp; DS4200</span>
+    <span>Northeastern University &nbsp;·&nbsp; Spring 2026</span>
+    <span>Kaggle AI Buzz Dataset</span>
+  </footer>
+
+  <!-- JavaScript: smooth scroll -->
+  <script>
+    var links = document.querySelectorAll('a[href^="#"]');
+
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
