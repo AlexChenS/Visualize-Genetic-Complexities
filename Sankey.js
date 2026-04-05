@@ -23,7 +23,7 @@ const layout = {
   paper_bgcolor: "rgba(0,0,0,0)",
   plot_bgcolor:  "rgba(0,0,0,0)",
   font: { size: 12, color: isDark ? "#d1d0ca" : "#2C2C2A", family: "sans-serif" },
-  margin: { l: 10, r: 10, t: 10, b: 10 },
+  margin: { l: 10, r: 10, t: 40, b: 10 },
 };
 
 const config = { displayModeBar: false, responsive: true };

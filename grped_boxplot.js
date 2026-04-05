@@ -64,9 +64,14 @@ renderLegend();
 function drawBox(g, stats, color, bw) {
   if (!stats) return;
 
-  g.append("line")   // whisker
+  g.append("line")   // lower whisker (min → q1)
     .attr("x1", bw / 2).attr("x2", bw / 2)
-    .attr("y1", yScale(stats.min)).attr("y2", yScale(stats.max))
+    .attr("y1", yScale(stats.min)).attr("y2", yScale(stats.q1))
+    .attr("stroke", "#888").attr("stroke-width", 1.5);
+
+  g.append("line")   // upper whisker (q3 → max)
+    .attr("x1", bw / 2).attr("x2", bw / 2)
+    .attr("y1", yScale(stats.q3)).attr("y2", yScale(stats.max))
     .attr("stroke", "#888").attr("stroke-width", 1.5);
 
   g.append("rect")   // IQR box
@@ -91,9 +96,8 @@ function drawBox(g, stats, color, bw) {
 
 // ── Draw ──────────────────────────────────────────────────────────────────────
 function draw(data, yCol) {
-  svg.selectAll(".box-group").remove();  // clear previous boxes
+  svg.selectAll(".box-group").remove(); 
 
-  // Build stats: { "H/O serious maternal illness": { Yes: {...}, No: {...} }, ... }
   const nested = {};
   GROUP_COLS.forEach(col => {
     nested[col] = {};

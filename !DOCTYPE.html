@@ -326,6 +326,7 @@
     .tag-orange { color: #c2410c; border-color: #c2410c; background-color: #fff4ec; }
     .tag-altair { color: #0369a1; border-color: #0369a1; background-color: #e0f2fe; }
     .tag-d3     { color: #b45309; border-color: #b45309; background-color: #fef3c7; }
+    .tag-Plotly {color: #383838; border-color: #383838; background-color: #acacac;}
 
     .interaction-note {
       background-color: #fffbeb;
@@ -659,7 +660,7 @@
     <p class="section-label">Visualizations</p>
     <h2>Data Visualizations</h2>
     <p class="subtitle">
-      Five visualizations addressing all three analysis tasks, built with Altair and D3.js.
+      Five visualizations addressing all three analysis tasks, built with Altair, D3.js, and Plotly.
       Each visualization includes a takeaway explaining key findings.
     </p>
 
@@ -718,21 +719,43 @@
     </div>
 
     <!-- Plot 3 -->
-    <div class="viz-chart" id="sankey-chart">
-      <div id="sankey" style="width:100%; height:560px;"></div>
-      <div style="display:flex; align-items:center; gap:12px; margin-top:1rem;">
-  
-    
+    <div class="viz-block">
+      <div class="viz-header">
+        <div class="viz-type">Plot 3 &nbsp;·&nbsp; D3.js &nbsp;·&nbsp; Interactive</div>
+        <h3>Ancestral and Parental Inheritance to Genetic Disorder</h3>
       </div>
-      <select id="sankeyMode">
-          <option value="all">All levels</option>
-          <option value="parental">Parent level only</option>
-        </select>
-    </div>
-    <div class="interaction-note">
-    <strong>Interaction:</strong> Use the dropdown to toggle between the full
-    4-layer ancestral view and a simplified 3-layer parental view. Hover any
-    flow to see exact counts. Nodes can be dragged to reposition.
+      <div class="viz-chart" id="sankey-chart">
+        <div id="sankey" style="width:100%; height:560px;"></div>
+        <div style="display:flex; align-items:center; gap:12px; margin-top:1rem;">
+          <span>View</span>
+          <select id="sankeyMode">
+            <option value="all">All levels</option>
+            <option value="parental">Parent level only</option>
+          </select>
+        </div>
+      </div>
+      <div class="interaction-note">
+        <strong>Interaction:</strong> Use the dropdown to toggle between the full
+        4-layer ancestral view and a simplified 3-layer parental view. Hover any
+        flow to see exact counts. Nodes can be dragged to reposition.
+      </div>
+      <div class="viz-footer">
+        <div class="takeaway">
+          <h4>Takeaway</h4>
+          <p>
+            From the sankey diagram, more patients with Leigh Syndrome and Mitochondrial
+            myopathy, which both belong in the class of Mitochondrial genetic inheritance
+            disorders, have maternal genetic disorder history. Whereas for single gene
+            genetic disorders, patients without any parental genetic disorder history
+            outnumber patients with maternal genetic disorder history.
+          </p>
+        </div>
+        <div class="viz-tags">
+          <span class="tag tag-Plotly">Plotly</span>
+          <span class="tag tag-blue">Task 2</span>
+          <span class="tag tag-purple">Yuqi</span>
+        </div>
+      </div>
     </div>
 
 
@@ -749,12 +772,16 @@
 
       <div id="boxplot-chart"></div>
       <div class="interaction-note">
-        <strong>Interaction:</strong> [add in]
+        <strong>Interaction:</strong> Use drop down menu to select between blood cell count and white blood cell count
       <div class="viz-footer">
         <div class="takeaway">
           <h4>Takeaway</h4>
           <p>
-            [add in after reviewing visuals]
+            After controlling for factors — serious maternal illness, radiation exposure,
+            and substance abuse, blood cell count and white blood cell count doesn't show
+            a particular pattern which is unexpected. It indicates that these pre-existing
+            conditions may have less of an impact on child genetic disorders than perceived,
+            or there maybe confounding variables at play. Further studies would be beneficial.
           </p>
         </div>
         <div class="viz-tags">
