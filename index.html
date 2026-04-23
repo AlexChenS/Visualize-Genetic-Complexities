@@ -869,7 +869,7 @@ on the available test results.
         <h3>🔍 &nbsp; Key Findings</h3>
         
         <p><strong>Task 1: Clinical Measurements vs. Disorder Type</strong><br>
-          K-means clustering identified four biomarker patterns. Clusters 3–4 showed high WBC counts (~9-10k/μL), Clusters 1–2 showed low counts (~5-6k/μL). Test results distributed evenly across clusters, indicating blood measurements alone cannot distinguish disorder types.
+          K-means clustering identified four biomarker patterns. Clusters 3–4 showed high WBC counts (~9-10k/μL), Clusters 1–2 showed low counts (~5-6k/μL). Test results distributed evenly across clusters, indicating blood measurements alone are insufficient, validating the need for multi-biomarker diagnostic approaches in clinical practice.
         </p>
         
         <p><strong>Task 2: Inheritance Patterns &amp; Outcomes</strong><br>
@@ -889,8 +889,7 @@ on the available test results.
         <h3>🔭 &nbsp; Limitations &amp; Future Work</h3>
         
         <p><strong>Limitations</strong><br>
-          <em>Data:</em> Dataset reduced from 22K to 5K records after removing missing values. Anonymized features limit interpretation. Cross-sectional data prevents temporal analysis.
-          <br><br>
+          <em>Data:</em> After removing rows with missing values, the dataset was reduced from 22,00 to approximately 5,000 records. This significant reduction occurred because the dataset required complete information across all 45 features for clustering and comparative analysis. While this may introduce selection bias toward patients with more comprehensive medical records, it ensures data quality and prevents imputation errors from affecting our clustering results. Future work could explore targeted imputation strategies to retain more data.
           <em>Methods:</em> K-means assumes spherical clusters. Only two biomarkers used. Associations don't establish causation; unknown confounders may influence results.
           <br><br>
           <em>Generalizability:</em> Kaggle dataset may not represent clinical populations. Findings require real-world validation.
